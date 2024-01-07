@@ -1,5 +1,5 @@
 use bonsai_bt::Behavior::RepeatSequence;
-use bonsai_bt::{Behavior::Action, Event, Failure, Running, Status, Success, UpdateArgs, BT};
+use bonsai_bt::{Behavior::Action, Event, Failure, Running, Status, Success, UpdateArgs, Wait, BT};
 
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug, PartialEq)]
 pub enum EnemyNPC {
@@ -15,7 +15,7 @@ fn game_tick(bt: &mut BT<EnemyNPC, BlackBoardData>, state: &mut EnemyNPCState) -
     let e: Event = UpdateArgs { dt: 0.0 }.into();
 
     #[rustfmt::skip]
-    let status = bt.tick(&e, &mut |args: bonsai_bt::ActionArgs<Event, EnemyNPC>, blackboard| {
+    let status = bt.clone().tick(&e, &mut |args: bonsai_bt::ActionArgs<Event, EnemyNPC>, blackboard| {
         match *args.action {
             EnemyNPC::Run => {
                 state.perform_action("run");
@@ -191,7 +191,7 @@ fn main() {
     );
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct BlackBoardData {
     times_shot: usize,
 }
